@@ -1,0 +1,47 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+
+<div class="jumbotron my">
+    <p class="font-weight-light text-right">작성자 : {{diary.writer}} &nbsp;&nbsp; 수정일 : {{diary.date}}<br></p>
+
+    <img src="{{ diary.image.url }}" class="rounded mx-auto d-block" width="200px" height="300px"><br>
+    <h2 class="display-4">{{diary.title}}</h2>
+    <p class="lead">{{diary.body}}
+
+    {% if user.username == diary.writer %}
+    <div class="float-right">
+        <a href="{% url 'edit' diary.id %}" class="badge badge-primary">수정</a>
+        <a href="{% url 'delete' diary.id %}" class="badge badge-secondary">삭제</a>
+    </div></p>
+    
+    {% endif %}
+<br>
+    <hr class="my-4">
+    
+    <div>
+    <div class="badge badge-info text-wrap" style="width: 9rem;">
+            댓글
+    </div>
+
+    <br>
+    {% for comment in diary.comments.all %}
+        <span class="border border-info">&nbsp;{{comment.com_writer}} &nbsp;</span>
+         {{ comment.contents }} &nbsp;
+         {% if user.username == comment.com_writer %}
+        <a href="{% url 'comment_edit' diary.id comment.id %}"  class="badge badge-primary">수정</a> | 
+        <a href="{% url 'comment_delete' diary.id comment.id %}"  class="badge badge-secondary">삭제</a>
+        {% endif %}
+        <br>
+    {% endfor %}
+    </div>
+    <br>
+    <span class= comment>댓글 쓰기:</span><br>
+    <form action="{% url 'comment_create' diary.id %}" method=POST>
+        {% csrf_token %}
+        <input type="text" name="contents">
+        <button type="submit" >SAVE</button>
+    </form>
+</div>
+{% endblock %}
